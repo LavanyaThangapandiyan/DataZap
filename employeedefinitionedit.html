@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:layout="https://thymeleaf.org" lang="en" xmlns:th="https://thymeleaf.org">
+
+<head th:fragment="headerscriptlets">
+	<title></title>
+</head>
+<div th:fragment="title" th:text="Employee"></div>
+<div th:fragment="outlookpage">
+	<div th:replace="core/employeedefinitionoutlook :: employeedefinitionoutlookhead"></div>
+	<div th:replace="core/employeedefinitionoutlook :: employeedefinitionoutlookbody"></div>
+	<div th:replace="core/employeedefinitionoutlook :: employeedefinitionoutlookfooter"></div>
+</div>
+<body th:fragment="content">
+	
+	<div th:replace="appdatacore/VariableProperty :: variableproperty"></div>
+	<div th:replace="appdatacore/VariableProperty :: variablepropertybody"></div>
+	
+	<form name="employeeDefinitionForm" id="employeeDefinitionForm" class="cs-form-default">
+		<legend th:text="#{key.legend.GeneralInformation}"></legend>
+		<div class="cs-cell-8" id="GeneralInformation_Column1">
+			<div class="cs-input">
+				<label for="employeeName" th:text="EmployeeName"></label> <input type="text" id="employeeName"
+					tabindex="1" class="cs-texttip-bottom chkMandatory" name="employeeDefinitionVO.employeeName"
+					maxlength="30" th:placeholder="Employee_Name" data-description="mandateMsg"> <span
+					class="cs-required"></span>
+			</div>
+			<div class="cs-input">
+				<label for="Age" th:text="Age"></label>
+				<input type="text" id="employeeAge" tabindex="2" class="cs-texttip-bottom "
+					name="employeeDefinitionVO.age" maxlength="30" th:placeholder="Enter_Employee_Age"
+					required="required" data-description="mandateMsg">
+				<span class="cs-required"></span>
+			</div>
+		</div>
+
+		<!-- Group 1 : General Information : Column 2 -->
+		<div class="cs-cell-8" id="GeneralInformation_column2">
+			<div class="cs-textarea">
+				<label for="address" th:text="Address"></label>
+				<textarea id="description" tabindex="3" class="cs-texttip-bottom" name="employeeDefinitionVO.address"
+					maxlength="1000" th:placeholder="Enter_Address" cols="20" rows="5"></textarea>
+			</div>
+		</div>
+		<div>
+			<input type="hidden" id="employeeId" name="employeeDefinitionVO.employeeId">
+		</div>
+
+		<div id="variableModelDiv"> </div>
+		<input type="hidden" id="orgId" name="employeeDefinitionVO.orgId">
+		<input type="hidden" name="employeeDefinitionVO.createdBy" id="createdBy">
+		<input type="hidden" name="employeeDefinitionVO.createdOn" id="createdOn">
+		<input type="hidden" name="employeeDefinitionVO.lastModifiedBy" id="lastModifiedBy">
+		<input type="hidden" name="employeeDefinitionVO.lastModifiedOn" id="lastModifiedOn">
+		<input type="hidden" name="pageValueObject" id="pageValueObject" th:value="${pageValueObject}">
+		<div>
+			<input type="hidden" id="employeeId" name="employeeDefinitionVO.employeeDefinitionId">
+		</div>
+	</form>
+	<input type="hidden" id="i18n-do-sprint-new" th:value="#{key.button.New}" />
+	<input type="hidden" id="i18n-do-sprint-save" th:value="#{key.button.Save}" />
+</body>
+<div th:fragment="footerscriptlets">
+	<script th:src="@{/js/common/core/employeeFooter.js}"></script>
+</div>
+</html>
