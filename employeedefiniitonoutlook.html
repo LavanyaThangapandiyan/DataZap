@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:layout="https://thymeleaf.org" xmlns:th="https://thymeleaf.org">
+<head th:fragment="employeedefinitionoutlookhead">
+	<title></title>
+</head>
+
+<body th:fragment="employeedefinitionoutlookbody">
+	<ul id="employeeDefinitionList_container"
+		style="width: 249px; height: 502px; overflow: hidden; outline: 0px; position: relative;"
+		class="cs-unstyled cs-slick-block slickgrid_725699 ui-widget">
+	</ul>
+	<div id="employeeDefinitionList_pager" style="width:249px;" class="cs-line">
+	</div>
+</body>
+
+<div th:fragment="employeedefinitionoutlookfooter">
+	<script th:src="@{/js/common/core/employeeOutlookFooter.js}"></script>
+	<script th:src="@{/js/common/core/employeeOutlook.js}"></script>
+</div>
+
+</html>
