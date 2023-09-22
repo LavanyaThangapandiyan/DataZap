@@ -18,6 +18,9 @@ $(function() {
 		saveMethod();
 	});
 });
+$(document).off("click", ".employeedelete").on("click", ".employeedelete", function() {
+	deleteEmployee(this.id);
+});
 function saveMethod() {
 	$.ajax({
 		type: "post",
@@ -30,8 +33,27 @@ function saveMethod() {
 			$(" #employeeDefinitionForm #pageValueObject").val(JSON.stringify(jsObj.valueObject));
 			fillPage('employeeDefinitionForm');
 			invokeTransactionMessage(jsObj);
-                         		},
-		error: function() {
+			
+			var result = eval('(' + data +')');
+        	employeeDefinitionList_data = result.content; 
+        	i=0;
+        	keysToLowerCase(employeeDefinitionList_data); 
+        	employeeDefinitionList_dataview.beginUpdate();
+        	employeeDefinitionList_dataview.setItems(employeeDefinitionList_data);
+        	employeeDefinitionList_dataview.endUpdate();
+        	employeeDefinitionList_dataview.refresh();        	
+        	employeeDefinitionList_grid.invalidateAllRows();
+        	employeeDefinitionList_grid.resizeCanvas();
+			setSessionValuesInExistingIds();
+        },
+		error: function(xhr, status, error) {
+			document.getElementById('modalLayer').style.visibility = 'hidden';
+			if (xhr.responseText == "Session-out") {
+				logOut();
+			} else {
+				var jsObj = JSON.parse(xhr.responseText);
+				invokeTransactionMessage(jsObj);
+			}
 		}
 	});
 }
