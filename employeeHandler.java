@@ -3,6 +3,7 @@ package com.chainsys.core.handler;
 import java.util.List;
 
 import org.json.JSONObject;
+
 import com.chainsys.appplatform.exception.AppException;
 import com.chainsys.appplatform.exception.BusinessException;
 import com.chainsys.appplatform.json.JSONUtils;
@@ -16,8 +17,21 @@ import com.chainsys.core.vo.UserProfileVO;
  * The Class EMployeeDefinitionHandler.
  */
 public final class EmployeeDefinitionHandler {
-	private static final String EMPLOYEE_DEFINITION_VO = "employeeDefinitionVO";
-
+	private static final String EMPLOYEE_DEFINITION_VO = "employeeDefinitionVO";	        
+	       
+	
+	       public void delete(int employeeId,UserProfileVO userProfileVO)
+	                throws AppException {
+	        	   
+	                EmployeeDefinition employeeDefinition = null;
+	                try {
+	                	employeeDefinition = new EmployeeDefinition();
+	                	employeeDefinition.delete(employeeId, userProfileVO);
+	                } catch (Exception exception) {
+	                    throw new AppException(getClass().getName(), "delete", exception.getMessage(), exception);
+	                }
+	            }
+	
 	public String fetchAll(UserProfileVO userProfileVO) throws AppException {
 		String jsonString = null;
 		EmployeeDefinition employeeDefiniiton = null;
@@ -47,7 +61,6 @@ public final class EmployeeDefinitionHandler {
 			employeeDefinitionVOJsonObject = new JSONObject(
 					new JSONUtils(userProfileVO).objectToJson(employeeDefinitionVO));
 
-
 			valueObjectJson = convertEmployeeDefinitionVoJsonToValueObjectJson(employeeDefinitionVOJsonObject);
 
 		} catch (AppException appException) {
@@ -68,7 +81,7 @@ public final class EmployeeDefinitionHandler {
 	 * @throws BusinessException the business exception
 	 */
 	public JSONObject save(JSONObject jsonObjectToValue, UserProfileVO userProfileVO)
-			throws AppException, BusinessException {
+			throws AppException {
 		EmployeeDefinitionVO employeeDefinitionVO = null;
 		EmployeeDefinition employeeDefinition = null;
 		JSONObject valueObjectJson = null;
