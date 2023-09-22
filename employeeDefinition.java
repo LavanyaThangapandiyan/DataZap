@@ -18,6 +18,30 @@ import com.chainsys.core.vo.UserProfileVO;
 
 public final class EmployeeDefinition {
 
+	public void delete(int employeeId, UserProfileVO userProfileVO)
+	        throws AppException {
+	        int userId = 0;
+	        int orgId = 0;
+	        EmployeeDefinitionDAO employeeDefiniitionDAO = null;
+	        List<EmployeeDefinitionVO> employeeVOList = null;
+	        JDBCTransaction jdbcTransaction = null;
+	        try {
+	        	employeeDefiniitionDAO = new EmployeeDefinitionDAO();
+	            userId = userProfileVO.getUserId();
+	            orgId = userProfileVO.getOrgId();
+	            /** Getting the jdbcTransaction */
+	            jdbcTransaction = new JDBCTransaction(userProfileVO.getOrgId(), true);
+	           employeeDefiniitionDAO.delete(jdbcTransaction, employeeId);
+	           AppConnectWrapper.commit(jdbcTransaction);
+	        } catch (AppException appException) {
+	            throw appException;
+	        } catch (Exception exception) {
+	            throw new AppException(getClass().getName(), "delete", exception.getMessage(), exception);
+	        } finally {
+	            AppConnectWrapper.rollback(jdbcTransaction);
+	        }
+
+	    }
 
 	public AppVO fetch(int employeeId, int orgId) throws AppException {
 		EmployeeDefinitionVO employeeDefinitionVO = null;
@@ -36,11 +60,10 @@ public final class EmployeeDefinition {
 	public List<AppVO> fetchAll(UserProfileVO userProfileVO) throws AppException {
 		List<AppVO> employeeDefinitionVOList = null;
 		List<Map<String, Object>> employeeDefinitionWithPrivilegeList = null;
-		EmployeeDefinitionDAO employeeDefinitionDAO =null;
+		EmployeeDefinitionDAO employeeDefinitionDAO = null;
 		try {
 			employeeDefinitionDAO = new EmployeeDefinitionDAO();
-			employeeDefinitionWithPrivilegeList = employeeDefinitionDAO.fetchAll(userProfileVO.getLoggedUserId(),
-					userProfileVO.getOrgId());
+			employeeDefinitionWithPrivilegeList = employeeDefinitionDAO.fetchAll(userProfileVO);
 			employeeDefinitionVOList = formEmployeeDefinitionVOList(employeeDefinitionWithPrivilegeList,
 					userProfileVO.getLoggedUserId());
 		} catch (AppException appException) {
@@ -50,34 +73,32 @@ public final class EmployeeDefinition {
 		}
 		return employeeDefinitionVOList;
 	}
-	
+
 	private List<AppVO> formEmployeeDefinitionVOList(List<Map<String, Object>> employeeDefinitionWithPrivilegeList,
-	        int loggedUserId) throws AppException {
-	        List<AppVO> employeeDefinitionVOList = null;
-	        EmployeeDefinitionVO employeeDefinitionVO = null;
-	        try {
-	            employeeDefinitionVOList = new ArrayList<>();
-	            for (Map<String, Object> employeeDefinitionWithPrivilegeMap : employeeDefinitionWithPrivilegeList) {
-	                employeeDefinitionVO = new EmployeeDefinitionVO();
-	                employeeDefinitionVO.setEmployeeName(employeeDefinitionWithPrivilegeMap.get("EMPLOYEE_NAME").toString());
-	                employeeDefinitionVO.setEmployeeId(
-	                    Integer.parseInt(employeeDefinitionWithPrivilegeMap.get("EMPLOYEE_ID").toString()));
+			int loggedUserId) throws AppException {
+		List<AppVO> employeeDefinitionVOList = null;
+		EmployeeDefinitionVO employeeDefinitionVO = null;
+		try {
+			employeeDefinitionVOList = new ArrayList<>();
+			for (Map<String, Object> employeeDefinitionWithPrivilegeMap : employeeDefinitionWithPrivilegeList) {
+				employeeDefinitionVO = new EmployeeDefinitionVO();
+				employeeDefinitionVO
+						.setEmployeeName(employeeDefinitionWithPrivilegeMap.get("EMPLOYEE_NAME").toString());
+				employeeDefinitionVO.setEmployeeId(
+						Integer.parseInt(employeeDefinitionWithPrivilegeMap.get("EMPLOYEE_ID").toString()));
 
-	                employeeDefinitionVO.setLoggedUserId(loggedUserId);
-	                employeeDefinitionVOList.add(employeeDefinitionVO);
-	            }
-	        } catch (Exception exception) {
-	            throw new AppException(getClass().getName(), "formEmployeeDefinitionVOList", exception.getMessage(),
-	                exception);
-	        }
-	        return employeeDefinitionVOList;
+				employeeDefinitionVO.setLoggedUserId(loggedUserId);
+				employeeDefinitionVOList.add(employeeDefinitionVO);
+			}
+		} catch (Exception exception) {
+			throw new AppException(getClass().getName(), "formEmployeeDefinitionVOList", exception.getMessage(),
+					exception);
+		}
+		return employeeDefinitionVOList;
 
-	    }
-	
-	
+	}
 
-	public AppVO save(EmployeeDefinitionVO employeeDefinitionVO, UserProfileVO userProfileVO)
-			throws AppException {
+	public AppVO save(EmployeeDefinitionVO employeeDefinitionVO, UserProfileVO userProfileVO) throws AppException {
 		int organizationId = 0;
 		EmployeeDefinitionDAO employeeDefinitionDAO = null;
 		JDBCTransaction jdbcTransaction = null;
@@ -87,7 +108,7 @@ public final class EmployeeDefinition {
 			jdbcTransaction = new JDBCTransaction(organizationId, true);
 			employeeDefinitionVO = employeeDefinitionDAO.save(jdbcTransaction, employeeDefinitionVO);
 			AppConnectWrapper.commit(jdbcTransaction);
-			
+
 		} catch (AppException appException) {
 			throw appException;
 		} catch (Exception exception) {
