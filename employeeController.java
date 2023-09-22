@@ -3,10 +3,8 @@ package com.chainsys.core.controller;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.chainsys.appdatacore.constants.AppDataLayoutConstants;
 import com.chainsys.appplatform.enumeration.MessageType;
 import com.chainsys.appplatform.exception.AppException;
@@ -31,10 +28,29 @@ import com.chainsys.web.interceptor.Layout;
  */
 @Controller
 @RequestMapping("/core/employeedefinition")
-public final class EmployeeDefinitionController {
-
+public final class EmployeeDefinitionController 
+{
+	
 	private static final String USER_PROFILE = "USER_PROFILE";
 	private static final String VALUE_OBJECT = "valueObject";
+
+	@PostMapping("delete")
+	public void delete(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			ModelAndView view) throws BusinessException, AppException {
+		String employeeId = null;
+		UserProfileVO userProfileVO = null;
+		EmployeeDefinitionHandler employeeDefinitionHandler = null;
+		try {
+			employeeDefinitionHandler = new EmployeeDefinitionHandler();
+			userProfileVO = (UserProfileVO) httpServletRequest.getSession(false).getAttribute(USER_PROFILE);
+			employeeId = httpServletRequest.getParameter("employeeId");
+			int employeeId1 = Integer.parseInt(employeeId);
+			employeeDefinitionHandler.delete(employeeId1, userProfileVO);
+			this.fetchall(httpServletRequest, httpServletResponse);
+		} catch (Exception exception) {
+			throw new AppException(getClass().getName(), "delete", exception.getMessage(), exception);
+		}
+	}
 
 	@PostMapping("/fetch")
 	public void fetch(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
@@ -86,7 +102,7 @@ public final class EmployeeDefinitionController {
 
 	@PostMapping("/save")
 	public void save(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, ModelAndView view)
-			throws AppException, BusinessException {
+			throws AppException {
 		JSONObject employeeDefinitionVOJsonObject = null;
 		JSONObject employeeDefinitionVORootJsonObject = null;
 		UserProfileVO userProfileVO = null;
@@ -110,8 +126,6 @@ public final class EmployeeDefinitionController {
 			messageVO.setMessage("key.message.Succeeded");
 			MessageUtils.setContentAndTransactionMessage(httpServletRequest, httpServletResponse, messageVO, null,
 					employeeDefinitionVORootJsonObject);
-		} catch (BusinessException businessException) {
-			throw businessException;
 		} catch (AppException appException) {
 			throw appException;
 		} catch (Exception exception) {
